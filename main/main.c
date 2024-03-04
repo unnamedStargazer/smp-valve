@@ -6,18 +6,19 @@
 
 void task_tx(void *p)
 {
-    bool dioPin = false;
+    // bool dioPin = false;
     for(;;) {
         vTaskDelay(pdMS_TO_TICKS(5000));
         lora_send_packet((uint8_t*)"Hello", 5);
         ESP_LOGI("test", "packet sent");
+        lora_dump_registers();
     }
 }
 
 void task_lora_init()
 {
     lora_init();
-    lora_write_reg(REG_DIO_MAPPING_1, (1 << 6));
+    lora_write_reg(REG_DIO_MAPPING_1, (lora_read_reg(REG_DIO_MAPPING_1) | (1 << 6)));
     lora_set_frequency(915e6);
     lora_enable_crc();
     vTaskDelete(NULL);
